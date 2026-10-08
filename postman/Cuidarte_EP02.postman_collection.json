@@ -1,0 +1,889 @@
+{
+  "info": {
+    "name": "Cuidarte+ EP02 · v1.0.0",
+    "description": "Ejecución de los casos de prueba de la EP01 (Caso B, ISY1102) sobre api-cuidarte v1.0.0.\nEjecutar las carpetas EN ORDEN (Run collection). Requiere BD recién inicializada (docker compose down -v && docker compose --profile app up -d api).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4000/api"
+    },
+    {
+      "key": "tokenMedico",
+      "value": ""
+    },
+    {
+      "key": "tokenAdmin",
+      "value": ""
+    },
+    {
+      "key": "tokenPaciente",
+      "value": ""
+    },
+    {
+      "key": "tokenLogout",
+      "value": ""
+    },
+    {
+      "key": "examenId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "00 · Ambiente",
+      "description": "Verifica que la API y la BD estén operativas antes de ejecutar los casos.",
+      "item": [
+        {
+          "name": "Salud de la API",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/salud",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "salud"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API y BD operativas\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.estado).to.eql(\"ok\");",
+                  "  pm.expect(j.bd).to.eql(\"ok\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CP-FUN-01 · Autenticación (RF-1.1, NFR-SEG-2, NFR-SEG-9)",
+      "description": "Login exitoso con JWT de corta vigencia, rechazo de credenciales inválidas y revocación al cerrar sesión.",
+      "item": [
+        {
+          "name": "01 Login válido dr_carlos → 200 + JWT",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_usuario\": \"dr_carlos\",\n  \"password\": \"SecurePass123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Entrega token JWT tipo Bearer\", () => {",
+                  "  pm.expect(j.token).to.be.a(\"string\").and.match(/^[\\w-]+\\.[\\w-]+\\.[\\w-]+$/);",
+                  "  pm.expect(j.tipo).to.eql(\"Bearer\");",
+                  "});",
+                  "pm.test(\"Rol medico asignado\", () => pm.expect(j.usuario.rol).to.eql(\"medico\"));",
+                  "pm.test(\"JWT con vigencia de 15 minutos (NFR-SEG-9)\", () => {",
+                  "  const p = JSON.parse(atob(j.token.split(\".\")[1].replace(/-/g, \"+\").replace(/_/g, \"/\")));",
+                  "  pm.expect(p.exp - p.iat).to.eql(900);",
+                  "});",
+                  "pm.test(\"No expone el hash de la contraseña\", () => pm.expect(pm.response.text()).to.not.include(\"password_hash\"));",
+                  "pm.collectionVariables.set(\"tokenMedico\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 Login contraseña incorrecta → 401",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_usuario\": \"dr_carlos\",\n  \"password\": \"ClaveIncorrecta1!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"Mensaje genérico (no revela si el usuario existe)\", () =>",
+                  "  pm.expect(pm.response.json().error).to.eql(\"Credenciales inválidas\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 Perfil con token válido → 200",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Identifica al usuario dr_carlos\", () => pm.expect(pm.response.json().nombre_usuario).to.eql(\"dr_carlos\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 Login para prueba de logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_usuario\": \"dra_ana\",\n  \"password\": \"SecurePass123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set(\"tokenLogout\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "05 Logout → 204",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenLogout}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 Token revocado tras logout → 401",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenLogout}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 401: el token ya no sirve\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CP-FUN-02 · Registro de paciente (RF-2.2, RF-2.3, RB-2)",
+      "description": "Un médico registra un paciente; el RUT se valida con dígito verificador y es único.",
+      "item": [
+        {
+          "name": "01 RUT del dato EP01 (18.765.432-K) → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pacientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes"
+              ]
+            },
+            "description": "Dato de prueba original de la EP01. El DV correcto de 18.765.432 es 7: se registra como ajuste en la sección 1.7.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan Pérez García\",\n  \"rut\": \"18.765.432-K\",\n  \"correo\": \"juan.perez@mail.com\",\n  \"fecha_nacimiento\": \"1962-05-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400: dígito verificador incorrecto\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Mensaje indica RUT inválido\", () => pm.expect(pm.response.json().error).to.include(\"RUT\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 Registro con RUT corregido (18.765.432-7) → 201",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pacientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan Pérez García\",\n  \"rut\": \"18.765.432-7\",\n  \"correo\": \"juan.perez@mail.com\",\n  \"fecha_nacimiento\": \"1962-05-15\",\n  \"consentimiento_datos\": true,\n  \"credenciales\": {\n    \"nombre_usuario\": \"juan.perez\",\n    \"password\": \"Paciente#2026x\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"RUT almacenado\", () => pm.expect(j.rut).to.eql(\"18.765.432-7\"));",
+                  "pm.test(\"Rol paciente asignado por defecto (RF-2.3)\", () => {",
+                  "  pm.expect(j.rol).to.eql(\"paciente\");",
+                  "  pm.expect(j.cuenta.rol).to.eql(\"paciente\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 RUT duplicado → 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pacientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Otro Paciente\",\n  \"rut\": \"18.765.432-7\",\n  \"correo\": \"otro@mail.com\",\n  \"fecha_nacimiento\": \"1970-01-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 409: el RUT debe ser único\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CP-INT-01 · Examen + auditoría (RF-3.1, RF-5.1, NFR-SEG-6)",
+      "description": "Crear un examen queda registrado en auditoría con usuario, acción, tabla y fecha.",
+      "item": [
+        {
+          "name": "01 Crear examen Hemograma paciente 101 → 201",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pacientes/101/examenes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes",
+                "101",
+                "examenes"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo_examen\": \"Hemograma\",\n  \"fecha_examen\": \"2026-09-03\",\n  \"resultado\": \"Hemoglobina 14.5 g/dL (Normal)\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Examen asociado al paciente 101 y al médico\", () => {",
+                  "  pm.expect(j.paciente_id).to.eql(101);",
+                  "  pm.expect(j.tipo_examen).to.eql(\"Hemograma\");",
+                  "});",
+                  "pm.test(\"Tiempo de respuesta < 300 ms (NFR-PERF-1)\", () => pm.expect(pm.response.responseTime).to.be.below(300));",
+                  "pm.collectionVariables.set(\"examenId\", j.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 Login administrador",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_usuario\": \"admin\",\n  \"password\": \"AdminPass123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set(\"tokenAdmin\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 Auditoría registra CREATE del examen",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auditoria?paciente_id=101&accion=CREATE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auditoria"
+              ],
+              "query": [
+                {
+                  "key": "paciente_id",
+                  "value": "101"
+                },
+                {
+                  "key": "accion",
+                  "value": "CREATE"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const id = Number(pm.collectionVariables.get(\"examenId\"));",
+                  "const ev = pm.response.json().datos.find(a => a.tabla_afectada === \"examen\" && a.registro_id === id);",
+                  "pm.test(\"Existe registro CREATE del examen creado\", () => pm.expect(ev).to.exist);",
+                  "pm.test(\"Registra usuario dr_carlos, tabla y fecha\", () => {",
+                  "  pm.expect(ev.nombre_usuario).to.eql(\"dr_carlos\");",
+                  "  pm.expect(ev.accion).to.eql(\"CREATE\");",
+                  "  pm.expect(ev.creado_en).to.be.a(\"string\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CP-SEG-01 · Control de acceso por rol (NFR-SEG-4, RB-1)",
+      "description": "El backend deniega a un paciente operaciones de escritura y el acceso a datos ajenos.",
+      "item": [
+        {
+          "name": "01 Login paciente_juan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_usuario\": \"paciente_juan\",\n  \"password\": \"PacientePass123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Rol paciente\", () => pm.expect(pm.response.json().usuario.rol).to.eql(\"paciente\"));",
+                  "pm.collectionVariables.set(\"tokenPaciente\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 Paciente intenta crear paciente → 403",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenPaciente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pacientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes"
+              ]
+            },
+            "description": "Body original de la EP01. El RBAC se evalúa antes que la validación de datos, por eso responde 403.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"María López\",\n  \"rut\": \"19.123.456-L\",\n  \"correo\": \"maria@mail.com\",\n  \"fecha_nacimiento\": \"1980-01-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403 Forbidden\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"Mensaje de acceso denegado sin detalles técnicos\", () => {",
+                  "  const e = pm.response.json().error;",
+                  "  pm.expect(e).to.include(\"Acceso denegado\");",
+                  "  pm.expect(pm.response.text()).to.not.match(/stack|at \\w+ \\(/);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 Paciente accede a su propia ficha → 200",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenPaciente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pacientes/101",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes",
+                "101"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200: puede ver su ficha (RB-1)\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 Paciente accede a ficha ajena 102 → 403",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenPaciente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pacientes/102",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes",
+                "102"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403: no puede ver datos de otro paciente\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "05 BD intacta: no se creó María López",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pacientes?q=María López",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pacientes"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "María López"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"0 registros creados\", () => pm.expect(pm.response.json().total).to.eql(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 Intentos denegados quedan auditados",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auditoria?usuario_id=50&accion=ACCESO_DENEGADO",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auditoria"
+              ],
+              "query": [
+                {
+                  "key": "usuario_id",
+                  "value": "50"
+                },
+                {
+                  "key": "accion",
+                  "value": "ACCESO_DENEGADO"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Hay registros ACCESO_DENEGADO del paciente (id 50)\", () =>",
+                  "  pm.expect(pm.response.json().datos.length).to.be.at.least(2));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
