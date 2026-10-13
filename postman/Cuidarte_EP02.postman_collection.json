@@ -373,7 +373,7 @@
       ]
     },
     {
-      "name": "CP-FUN-02 · Registro de paciente (RF-2.2, RF-2.3, RB-2)",
+      "name": "CP-FUN-02 · Registro de paciente por médico (RF-2.2, NFR-SEG-5)",
       "description": "Un médico registra un paciente; el RUT se valida con dígito verificador y es único.",
       "item": [
         {
@@ -466,7 +466,7 @@
                   "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
                   "const j = pm.response.json();",
                   "pm.test(\"RUT almacenado\", () => pm.expect(j.rut).to.eql(\"18.765.432-7\"));",
-                  "pm.test(\"Rol paciente asignado por defecto (RF-2.3)\", () => {",
+                  "pm.test(\"Cuenta creada con rol paciente (RF-2.2)\", () => {",
                   "  pm.expect(j.rol).to.eql(\"paciente\");",
                   "  pm.expect(j.cuenta.rol).to.eql(\"paciente\");",
                   "});"
@@ -524,7 +524,7 @@
       ]
     },
     {
-      "name": "CP-INT-01 · Examen + auditoría (RF-3.1, RF-5.1, NFR-SEG-6)",
+      "name": "CP-INT-01 · Examen + auditoría (RF-3.1, RF-5.1, RB-3)",
       "description": "Crear un examen queda registrado en auditoría con usuario, acción, tabla y fecha.",
       "item": [
         {
@@ -935,7 +935,7 @@
       ]
     },
     {
-      "name": "V1.1-01 · Autoregistro (RF-2.1)",
+      "name": "CP-FUN-03 · Autoregistro (RF-2.1)",
       "description": "Registro público con usuario, contraseña y correo; el rol asignado siempre es paciente.",
       "item": [
         {
@@ -1156,7 +1156,7 @@
       ]
     },
     {
-      "name": "V1.1-02 · Refresh token (RF-1.2)",
+      "name": "CP-FUN-01 · Parte 2 · Renovación de sesión (RF-1.2)",
       "description": "Renovación de sesión con rotación: un refresh token solo sirve una vez.",
       "item": [
         {
@@ -1252,7 +1252,7 @@
       ]
     },
     {
-      "name": "V1.1-03 · Gestión de usuarios (RF-2.5, RF-2.6, RF-2.7)",
+      "name": "CP-FUN-05 · Gestión de usuarios (RF-2.5, RF-2.6, RF-2.7, RB-2)",
       "description": "El administrador lista, edita roles, vincula fichas y elimina usuarios; todo queda auditado.",
       "item": [
         {
@@ -1656,7 +1656,7 @@
       ]
     },
     {
-      "name": "V1.1-04 · Editar paciente (RF-2.3)",
+      "name": "CP-FUN-04 · Editar paciente (RF-2.3, RF-2.4, RB-1)",
       "description": "Médico o admin editan la ficha; el paciente no puede (RB-1).",
       "item": [
         {
@@ -1804,7 +1804,7 @@
       ]
     },
     {
-      "name": "V1.1-05 · Eliminar examen (RF-3.3)",
+      "name": "CP-FUN-06 · Eliminar examen (RF-3.3, RF-5.1)",
       "description": "Eliminación lógica: deja de aparecer, se conserva en BD y queda auditada.",
       "item": [
         {
