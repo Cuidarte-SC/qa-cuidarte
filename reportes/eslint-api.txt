@@ -1,0 +1,33 @@
+
+/app/src/config.js
+  3:17  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+
+/app/src/routes/documentos.js
+   32:4   warning  Generic Object Injection Sink                                                 security/detect-object-injection
+   32:65  warning  Generic Object Injection Sink                                                 security/detect-object-injection
+   39:1   warning  Found mkdirSync from package "node:fs" with non literal argument at index 0   security/detect-non-literal-fs-filename
+   75:11  warning  Found writeFile from package "node:fs" with non literal argument at index 0   security/detect-non-literal-fs-filename
+  158:8   warning  Found existsSync from package "node:fs" with non literal argument at index 0  security/detect-non-literal-fs-filename
+  170:44  warning  Found readFile from package "node:fs" with non literal argument at index 0    security/detect-non-literal-fs-filename
+
+/app/src/routes/examenes.js
+  140:45  warning  Generic Object Injection Sink        security/detect-object-injection
+  144:71  warning  Function Call Object Injection Sink  security/detect-object-injection
+  144:83  warning  Generic Object Injection Sink        security/detect-object-injection
+
+/app/src/routes/pacientes.js
+  170:45  warning  Generic Object Injection Sink  security/detect-object-injection
+  174:38  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/app/src/routes/usuarios.js
+  92:45  warning  Generic Object Injection Sink  security/detect-object-injection
+  96:38  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/app/src/services/migracionCifrado.js
+  28:10  warning  Found existsSync from package "node:fs" with non literal argument at index 0  security/detect-non-literal-fs-filename
+  29:29  warning  Found readFile from package "node:fs" with non literal argument at index 0    security/detect-non-literal-fs-filename
+  31:11  warning  Found writeFile from package "node:fs" with non literal argument at index 0   security/detect-non-literal-fs-filename
+
+✖ 17 problems (0 errors, 17 warnings)
+
+ESLint api: 0 problemas

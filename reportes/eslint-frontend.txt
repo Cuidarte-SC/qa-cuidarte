@@ -1,0 +1,6 @@
+
+/app/src/pages/Auditoria.jsx
+  57:44  error  `tabIndex` should only be declared on interactive elements  jsx-a11y/no-noninteractive-tabindex
+
+✖ 1 problem (1 error, 0 warnings)
+
