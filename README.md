@@ -15,7 +15,7 @@ qa-cuidarte/
 └── reportes/     # ESLint, npm audit, ZAP, JMeter, Lighthouse (se agregan al ejecutar)
 ```
 
-## Casos de prueba de la EP02 (cobertura 100 % del ERS)
+## Casos de prueba de la EP02 
 
 ★ = caso heredado de la EP01.
 
