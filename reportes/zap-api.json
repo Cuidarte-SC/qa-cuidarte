@@ -1,0 +1,1119 @@
+{
+	"@programName": "ZAP",
+	"@version": "2.17.0",
+	"@generated": "Wed, 14 Oct 2026 16:37:47",
+	"created": "2026-10-14T16:37:47.850188652Z",
+	"insights":[
+		{
+			"level": "Low",
+			"reason": "Exceeded High",
+			"site": "http://api:4000",
+			"key": "insight.code.4xx",
+			"description": "Percentage of responses with status code 4xx",
+			"statistic": "79"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:4000",
+			"key": "insight.code.2xx",
+			"description": "Percentage of responses with status code 2xx",
+			"statistic": "18"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:4000",
+			"key": "insight.code.5xx",
+			"description": "Percentage of responses with status code 5xx",
+			"statistic": "1"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:4000",
+			"key": "insight.endpoint.ctype.application/json",
+			"description": "Percentage of endpoints with content type application/json",
+			"statistic": "85"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:4000",
+			"key": "insight.endpoint.ctype.text/html",
+			"description": "Percentage of endpoints with content type text/html",
+			"statistic": "11"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:4000",
+			"key": "insight.endpoint.method.DELETE",
+			"description": "Percentage of endpoints with method DELETE",
+			"statistic": "10"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:4000",
+			"key": "insight.endpoint.method.GET",
+			"description": "Percentage of endpoints with method GET",
+			"statistic": "55"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:4000",
+			"key": "insight.endpoint.method.POST",
+			"description": "Percentage of endpoints with method POST",
+			"statistic": "26"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:4000",
+			"key": "insight.endpoint.method.PUT",
+			"description": "Percentage of endpoints with method PUT",
+			"statistic": "7"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:4000",
+			"key": "insight.endpoint.total",
+			"description": "Count of total endpoints",
+			"statistic": "76"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:4000",
+			"key": "insight.response.slow",
+			"description": "Percentage of slow responses",
+			"statistic": "1"
+		}
+	],
+	"site":[ 
+		{
+			"@name": "http://api:4000",
+			"@host": "api",
+			"@port": "4000",
+			"@ssl": "false",
+			"alerts": [ 
+				{
+					"pluginid": "30002",
+					"alertRef": "30002",
+					"alert": "Format String Error",
+					"name": "Format String Error",
+					"riskcode": "2",
+					"confidence": "2",
+					"riskdesc": "Medium (Medium)",
+					"desc": "<p>A Format String error occurs when the submitted data of an input string is evaluated as a command by the application.</p>",
+					"instances":[ 
+						{
+							"id": "3702",
+							"uri": "http://api:4000/api/examenes/10/documentos",
+							"nodeName": "http:\/\/api:4000\/api\/examenes\/10\/documentos ()(multipart:archivo)",
+							"method": "POST",
+							"param": "archivo",
+							"attack": "ZAP%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s\n",
+							"evidence": "",
+							"otherinfo": "Potential Format String Error. The script closed the connection on a /%s."
+						}
+					],
+					"count": "1",
+					"systemic": false,
+					"solution": "<p>Rewrite the background program using proper deletion of bad character strings. This will require a recompile of the background executable.</p>",
+					"otherinfo": "<p>Potential Format String Error. The script closed the connection on a /%s.</p>",
+					"reference": "<p>https://owasp.org/www-community/attacks/Format_string_attack</p>",
+					"cweid": "134",
+					"wascid": "6",
+					"sourceid": "4464"
+				},
+				{
+					"pluginid": "100000",
+					"alertRef": "100000-2",
+					"alert": "A Server Error response code was returned by the server",
+					"name": "A Server Error response code was returned by the server",
+					"riskcode": "1",
+					"confidence": "3",
+					"riskdesc": "Low (High)",
+					"desc": "<p>A response code of 500 was returned by the server.</p><p>This may indicate that the application is failing to handle unexpected input correctly.</p><p>Raised by the 'Alert on HTTP Response Code Error' script</p>",
+					"instances":[ 
+						{
+							"id": "4070",
+							"uri": "http://api:4000/api/auditoria?paciente_id=10&usuario_id=10&accion=%00&limite=50",
+							"nodeName": "http:\/\/api:4000\/api\/auditoria (accion,limite,paciente_id,usuario_id)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "500",
+							"otherinfo": ""
+						},
+						{
+							"id": "4065",
+							"uri": "http://api:4000/api/pacientes?q=%00&pagina=1&limite=20",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes (limite,pagina,q)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "500",
+							"otherinfo": ""
+						},
+						{
+							"id": "4067",
+							"uri": "http://api:4000/api/usuarios?q=%00&rol=admin",
+							"nodeName": "http:\/\/api:4000\/api\/usuarios (q,rol)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "500",
+							"otherinfo": ""
+						},
+						{
+							"id": "248",
+							"uri": "http://api:4000/api/examenes/10/documentos",
+							"nodeName": "http:\/\/api:4000\/api\/examenes\/10\/documentos ()(multipart:archivo)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "500",
+							"otherinfo": ""
+						},
+						{
+							"id": "4166",
+							"uri": "http://api:4000/api/examenes/10/documentos",
+							"nodeName": "http:\/\/api:4000\/api\/examenes\/10\/documentos ()(multipart:rtobject)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "500",
+							"otherinfo": ""
+						}
+					],
+					"count": "5",
+					"systemic": false,
+					"solution": "",
+					"otherinfo": "",
+					"reference": "",
+					"cweid": "388",
+					"wascid": "20",
+					"sourceid": "4948"
+				},
+				{
+					"pluginid": "100001",
+					"alertRef": "100001",
+					"alert": "Unexpected Content-Type was returned",
+					"name": "Unexpected Content-Type was returned",
+					"riskcode": "1",
+					"confidence": "3",
+					"riskdesc": "Low (High)",
+					"desc": "<p>A Content-Type of text/html was returned by the server.</p><p>This is not one of the types expected to be returned by an API.</p><p>Raised by the 'Alert on Unexpected Content Types' script</p>",
+					"instances":[ 
+						{
+							"id": "28",
+							"uri": "http://api:4000",
+							"nodeName": "http:\/\/api:4000",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "text/html",
+							"otherinfo": ""
+						},
+						{
+							"id": "3593",
+							"uri": "http://api:4000/",
+							"nodeName": "http:\/\/api:4000\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "text/html",
+							"otherinfo": ""
+						},
+						{
+							"id": "16",
+							"uri": "http://api:4000/8229407673026519796",
+							"nodeName": "http:\/\/api:4000\/8229407673026519796",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "text/html",
+							"otherinfo": ""
+						},
+						{
+							"id": "2677",
+							"uri": "http://api:4000/computeMetadata/v1/",
+							"nodeName": "http:\/\/api:4000\/computeMetadata\/v1\/ ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "text/html",
+							"otherinfo": ""
+						},
+						{
+							"id": "2660",
+							"uri": "http://api:4000/latest/meta-data/",
+							"nodeName": "http:\/\/api:4000\/latest\/meta-data\/ ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "text/html",
+							"otherinfo": ""
+						},
+						{
+							"id": "2768",
+							"uri": "http://api:4000/metadata/instance",
+							"nodeName": "http:\/\/api:4000\/metadata\/instance ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "text/html",
+							"otherinfo": ""
+						},
+						{
+							"id": "2778",
+							"uri": "http://api:4000/metadata/v1",
+							"nodeName": "http:\/\/api:4000\/metadata\/v1 ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "text/html",
+							"otherinfo": ""
+						},
+						{
+							"id": "2700",
+							"uri": "http://api:4000/opc/v1/instance/",
+							"nodeName": "http:\/\/api:4000\/opc\/v1\/instance\/ ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "text/html",
+							"otherinfo": ""
+						},
+						{
+							"id": "2722",
+							"uri": "http://api:4000/opc/v2/instance/",
+							"nodeName": "http:\/\/api:4000\/opc\/v2\/instance\/ ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "text/html",
+							"otherinfo": ""
+						},
+						{
+							"id": "2787",
+							"uri": "http://api:4000/openstack/latest/meta_data.json",
+							"nodeName": "http:\/\/api:4000\/openstack\/latest\/meta_data.json ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "text/html",
+							"otherinfo": ""
+						}
+					],
+					"count": "10",
+					"systemic": false,
+					"solution": "",
+					"otherinfo": "",
+					"reference": "",
+					"cweid": "-1",
+					"wascid": "-1",
+					"sourceid": "58"
+				},
+				{
+					"pluginid": "100000",
+					"alertRef": "100000-1",
+					"alert": "A Client Error response code was returned by the server",
+					"name": "A Client Error response code was returned by the server",
+					"riskcode": "0",
+					"confidence": "3",
+					"riskdesc": "Informational (High)",
+					"desc": "<p>A response code of 404 was returned by the server.</p><p>This may indicate that the application is failing to handle unexpected input correctly.</p><p>Raised by the 'Alert on HTTP Response Code Error' script</p>",
+					"instances":[ 
+						{
+							"id": "13",
+							"uri": "http://api:4000/api/documentos/10",
+							"nodeName": "http:\/\/api:4000\/api\/documentos\/10",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3590",
+							"uri": "http://api:4000/api/documentos/10/",
+							"nodeName": "http:\/\/api:4000\/api\/documentos\/10\/",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3600",
+							"uri": "http://api:4000/api/pacientes/10/",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10\/",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3598",
+							"uri": "http://api:4000/api/pacientes/10/examenes/10/",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10\/examenes\/10\/",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "5",
+							"uri": "http://api:4000/api/usuarios/10",
+							"nodeName": "http:\/\/api:4000\/api\/usuarios\/10",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3599",
+							"uri": "http://api:4000/api/usuarios/10/",
+							"nodeName": "http:\/\/api:4000\/api\/usuarios\/10\/",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "27",
+							"uri": "http://api:4000",
+							"nodeName": "http:\/\/api:4000",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3592",
+							"uri": "http://api:4000/",
+							"nodeName": "http:\/\/api:4000\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "15",
+							"uri": "http://api:4000/8229407673026519796",
+							"nodeName": "http:\/\/api:4000\/8229407673026519796",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "30",
+							"uri": "http://api:4000/api",
+							"nodeName": "http:\/\/api:4000\/api",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3603",
+							"uri": "http://api:4000/api/",
+							"nodeName": "http:\/\/api:4000\/api\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "17",
+							"uri": "http://api:4000/api/8362234944717903685",
+							"nodeName": "http:\/\/api:4000\/api\/8362234944717903685",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "56",
+							"uri": "http://api:4000/api/auditoria?paciente_id=http%3A%2F%2Fwww.google.com%2F&usuario_id=10&accion=CREATE&limite=50",
+							"nodeName": "http:\/\/api:4000\/api\/auditoria (accion,limite,paciente_id,usuario_id)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "50",
+							"uri": "http://api:4000/api/auth",
+							"nodeName": "http:\/\/api:4000\/api\/auth",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3605",
+							"uri": "http://api:4000/api/auth/",
+							"nodeName": "http:\/\/api:4000\/api\/auth\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "18",
+							"uri": "http://api:4000/api/auth/6383182928676270399",
+							"nodeName": "http:\/\/api:4000\/api\/auth\/6383182928676270399",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "4071",
+							"uri": "http://api:4000/api/auth/actuator/health",
+							"nodeName": "http:\/\/api:4000\/api\/auth\/actuator\/health",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "64",
+							"uri": "http://api:4000/api/documentos",
+							"nodeName": "http:\/\/api:4000\/api\/documentos",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3608",
+							"uri": "http://api:4000/api/documentos/",
+							"nodeName": "http:\/\/api:4000\/api\/documentos\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "80",
+							"uri": "http://api:4000/api/documentos/10",
+							"nodeName": "http:\/\/api:4000\/api\/documentos\/10",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3610",
+							"uri": "http://api:4000/api/documentos/10/",
+							"nodeName": "http:\/\/api:4000\/api\/documentos\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "20",
+							"uri": "http://api:4000/api/documentos/10/4369988148767984974",
+							"nodeName": "http:\/\/api:4000\/api\/documentos\/10\/4369988148767984974",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "14",
+							"uri": "http://api:4000/api/documentos/10/descarga",
+							"nodeName": "http:\/\/api:4000\/api\/documentos\/10\/descarga",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3611",
+							"uri": "http://api:4000/api/documentos/10/descarga/",
+							"nodeName": "http:\/\/api:4000\/api\/documentos\/10\/descarga\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "19",
+							"uri": "http://api:4000/api/documentos/4597981978576235790",
+							"nodeName": "http:\/\/api:4000\/api\/documentos\/4597981978576235790",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "93",
+							"uri": "http://api:4000/api/examenes",
+							"nodeName": "http:\/\/api:4000\/api\/examenes",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3613",
+							"uri": "http://api:4000/api/examenes/",
+							"nodeName": "http:\/\/api:4000\/api\/examenes\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "110",
+							"uri": "http://api:4000/api/examenes/10",
+							"nodeName": "http:\/\/api:4000\/api\/examenes\/10",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3615",
+							"uri": "http://api:4000/api/examenes/10/",
+							"nodeName": "http:\/\/api:4000\/api\/examenes\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "22",
+							"uri": "http://api:4000/api/examenes/10/4995778422314161413",
+							"nodeName": "http:\/\/api:4000\/api\/examenes\/10\/4995778422314161413",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "11",
+							"uri": "http://api:4000/api/examenes/10/documentos",
+							"nodeName": "http:\/\/api:4000\/api\/examenes\/10\/documentos",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3614",
+							"uri": "http://api:4000/api/examenes/10/documentos/",
+							"nodeName": "http:\/\/api:4000\/api\/examenes\/10\/documentos\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "21",
+							"uri": "http://api:4000/api/examenes/7220035586441918458",
+							"nodeName": "http:\/\/api:4000\/api\/examenes\/7220035586441918458",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3616",
+							"uri": "http://api:4000/api/pacientes/10/",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "24",
+							"uri": "http://api:4000/api/pacientes/10/5134559901197589968",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10\/5134559901197589968",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "8",
+							"uri": "http://api:4000/api/pacientes/10/examenes",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10\/examenes",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3617",
+							"uri": "http://api:4000/api/pacientes/10/examenes/",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10\/examenes\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3618",
+							"uri": "http://api:4000/api/pacientes/10/examenes/10/",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10\/examenes\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "25",
+							"uri": "http://api:4000/api/pacientes/10/examenes/354981950789953038",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10\/examenes\/354981950789953038",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "23",
+							"uri": "http://api:4000/api/pacientes/1642235373169680278",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/1642235373169680278",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "3",
+							"uri": "http://api:4000/api/usuarios/10",
+							"nodeName": "http:\/\/api:4000\/api\/usuarios\/10",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3619",
+							"uri": "http://api:4000/api/usuarios/10/",
+							"nodeName": "http:\/\/api:4000\/api\/usuarios\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "26",
+							"uri": "http://api:4000/api/usuarios/4263171292207647935",
+							"nodeName": "http:\/\/api:4000\/api\/usuarios\/4263171292207647935",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "0",
+							"uri": "http://api:4000/api/auth/login",
+							"nodeName": "http:\/\/api:4000\/api\/auth\/login ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "237",
+							"uri": "http://api:4000/api/auth/login",
+							"nodeName": "http:\/\/api:4000\/api\/auth\/login ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "3585",
+							"uri": "http://api:4000/api/auth/login/",
+							"nodeName": "http:\/\/api:4000\/api\/auth\/login\/ ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "2",
+							"uri": "http://api:4000/api/auth/refresh",
+							"nodeName": "http:\/\/api:4000\/api\/auth\/refresh ()({refresh_token})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "1973",
+							"uri": "http://api:4000/api/auth/refresh",
+							"nodeName": "http:\/\/api:4000\/api\/auth\/refresh ()({refresh_token})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "3587",
+							"uri": "http://api:4000/api/auth/refresh/",
+							"nodeName": "http:\/\/api:4000\/api\/auth\/refresh\/ ()({refresh_token})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "1",
+							"uri": "http://api:4000/api/auth/registro",
+							"nodeName": "http:\/\/api:4000\/api\/auth\/registro ()({nombre_usuario,password,correo,nombre})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "3586",
+							"uri": "http://api:4000/api/auth/registro/",
+							"nodeName": "http:\/\/api:4000\/api\/auth\/registro\/ ()({nombre_usuario,password,correo,nombre})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "12",
+							"uri": "http://api:4000/api/examenes/10/documentos",
+							"nodeName": "http:\/\/api:4000\/api\/examenes\/10\/documentos ()(multipart:archivo)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3595",
+							"uri": "http://api:4000/api/examenes/10/documentos/",
+							"nodeName": "http:\/\/api:4000\/api\/examenes\/10\/documentos\/ ()(multipart:archivo)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "6",
+							"uri": "http://api:4000/api/pacientes",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes ()({nombre,rut,correo,fecha_nacimiento,consentimiento_datos,credenciales:{nombre_usuario,password}})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "3594",
+							"uri": "http://api:4000/api/pacientes/",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/ ()({nombre,rut,correo,fecha_nacimiento,consentimiento_datos,credenciales:{nombre_usuario,password}})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "9",
+							"uri": "http://api:4000/api/pacientes/10/examenes",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10\/examenes ()({tipo_examen,fecha_examen,resultado,estado})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "3596",
+							"uri": "http://api:4000/api/pacientes/10/examenes/",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10\/examenes\/ ()({tipo_examen,fecha_examen,resultado,estado})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "2676",
+							"uri": "http://api:4000/computeMetadata/v1/",
+							"nodeName": "http:\/\/api:4000\/computeMetadata\/v1\/ ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2659",
+							"uri": "http://api:4000/latest/meta-data/",
+							"nodeName": "http:\/\/api:4000\/latest\/meta-data\/ ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2767",
+							"uri": "http://api:4000/metadata/instance",
+							"nodeName": "http:\/\/api:4000\/metadata\/instance ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2777",
+							"uri": "http://api:4000/metadata/v1",
+							"nodeName": "http:\/\/api:4000\/metadata\/v1 ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2699",
+							"uri": "http://api:4000/opc/v1/instance/",
+							"nodeName": "http:\/\/api:4000\/opc\/v1\/instance\/ ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2721",
+							"uri": "http://api:4000/opc/v2/instance/",
+							"nodeName": "http:\/\/api:4000\/opc\/v2\/instance\/ ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "2786",
+							"uri": "http://api:4000/openstack/latest/meta_data.json",
+							"nodeName": "http:\/\/api:4000\/openstack\/latest\/meta_data.json ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "7",
+							"uri": "http://api:4000/api/pacientes/10",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10 ()({nombre,rut,correo,fecha_nacimiento,consentimiento_datos})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "3597",
+							"uri": "http://api:4000/api/pacientes/10/",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10\/ ()({nombre,rut,correo,fecha_nacimiento,consentimiento_datos})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "10",
+							"uri": "http://api:4000/api/pacientes/10/examenes/10",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10\/examenes\/10 ()({tipo_examen,fecha_examen,resultado,estado})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "3591",
+							"uri": "http://api:4000/api/pacientes/10/examenes/10/",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes\/10\/examenes\/10\/ ()({tipo_examen,fecha_examen,resultado,estado})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "4",
+							"uri": "http://api:4000/api/usuarios/10",
+							"nodeName": "http:\/\/api:4000\/api\/usuarios\/10 ()({nombre,correo,rol,activo,paciente_id})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "3601",
+							"uri": "http://api:4000/api/usuarios/10/",
+							"nodeName": "http:\/\/api:4000\/api\/usuarios\/10\/ ()({nombre,correo,rol,activo,paciente_id})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						}
+					],
+					"count": "70",
+					"systemic": false,
+					"solution": "",
+					"otherinfo": "",
+					"reference": "",
+					"cweid": "388",
+					"wascid": "20",
+					"sourceid": "31"
+				},
+				{
+					"pluginid": "10049",
+					"alertRef": "10049-1",
+					"alert": "Non-Storable Content",
+					"name": "Non-Storable Content",
+					"riskcode": "0",
+					"confidence": "2",
+					"riskdesc": "Informational (Medium)",
+					"desc": "<p>The response contents are not storable by caching components such as proxy servers. If the response does not contain sensitive, personal or user-specific information, it may benefit from being stored and cached, to improve performance.</p>",
+					"instances":[ 
+						{
+							"id": "89",
+							"uri": "http://api:4000/api/salud",
+							"nodeName": "http:\/\/api:4000\/api\/salud",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "authorization:",
+							"otherinfo": ""
+						},
+						{
+							"id": "95",
+							"uri": "http://api:4000/api/usuarios?q=q&rol=admin",
+							"nodeName": "http:\/\/api:4000\/api\/usuarios (q,rol)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "authorization:",
+							"otherinfo": ""
+						},
+						{
+							"id": "94",
+							"uri": "http://api:4000/api/auth/login",
+							"nodeName": "http:\/\/api:4000\/api\/auth\/login ()({nombre_usuario,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "authorization:",
+							"otherinfo": ""
+						},
+						{
+							"id": "71",
+							"uri": "http://api:4000/api/auth/refresh",
+							"nodeName": "http:\/\/api:4000\/api\/auth\/refresh ()({refresh_token})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "authorization:",
+							"otherinfo": ""
+						},
+						{
+							"id": "70",
+							"uri": "http://api:4000/api/pacientes",
+							"nodeName": "http:\/\/api:4000\/api\/pacientes ()({nombre,rut,correo,fecha_nacimiento,consentimiento_datos,credenciales:{nombre_usuario,password}})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "authorization:",
+							"otherinfo": ""
+						}
+					],
+					"count": "5",
+					"systemic": true,
+					"solution": "<p>The content may be marked as storable by ensuring that the following conditions are satisfied:</p><p>The request method must be understood by the cache and defined as being cacheable (\"GET\", \"HEAD\", and \"POST\" are currently defined as cacheable)</p><p>The response status code must be understood by the cache (one of the 1XX, 2XX, 3XX, 4XX, or 5XX response classes are generally understood)</p><p>The \"no-store\" cache directive must not appear in the request or response header fields</p><p>For caching by \"shared\" caches such as \"proxy\" caches, the \"private\" response directive must not appear in the response</p><p>For caching by \"shared\" caches such as \"proxy\" caches, the \"Authorization\" header field must not appear in the request, unless the response explicitly allows it (using one of the \"must-revalidate\", \"public\", or \"s-maxage\" Cache-Control response directives)</p><p>In addition to the conditions above, at least one of the following conditions must also be satisfied by the response:</p><p>It must contain an \"Expires\" header field</p><p>It must contain a \"max-age\" response directive</p><p>For \"shared\" caches such as \"proxy\" caches, it must contain a \"s-maxage\" response directive</p><p>It must contain a \"Cache Control Extension\" that allows it to be cached</p><p>It must have a status code that is defined as cacheable by default (200, 203, 204, 206, 300, 301, 404, 405, 410, 414, 501).</p>",
+					"otherinfo": "",
+					"reference": "<p>https://datatracker.ietf.org/doc/html/rfc7234</p><p>https://datatracker.ietf.org/doc/html/rfc7231</p><p>https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html</p>",
+					"cweid": "524",
+					"wascid": "13",
+					"sourceid": "1"
+				}
+			]
+		}
+	],
+	"sequences":[
+	]
+
+}
